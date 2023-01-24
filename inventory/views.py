@@ -5,10 +5,17 @@ from .forms import InventoryForm
 from .models import Inventory
 # Create your views here.
 
-class InventoryListView(ListView):
-    model = Inventory
-    template_name = 'list_inventory.html'
 
+def inventory_list_view(request):
+    products = Inventory.objects.all()
+    context = {'object_list': products}
+    return render(request, 'list_inventory.html', context = context)
+
+def inventory_search_view(request):
+    query = request.GET.get('q')
+    product_search = Inventory.objects.filter(name__icontains = query)
+    context = {'object_list': product_search}
+    return render(request, 'inventory_search.html', context = context)
 
 class IndexView(ListView):
     model = Inventory
@@ -21,6 +28,7 @@ class Inventory_createView(FormView):
     def form_valid(self, form):
         form.save()
         return super().form_valid(form)
+
 
 class Inventory_updateView(UpdateView):
     model = Inventory
